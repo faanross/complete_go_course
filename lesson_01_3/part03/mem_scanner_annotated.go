@@ -6,7 +6,6 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"syscall"
 	"unsafe"
 )
@@ -131,12 +130,19 @@ var (
 	procGetCurrentProcess    = kernel32.NewProc("GetCurrentProcess")
 )
 
+// SectionInfo: Stores information about a PE section
+type SectionInfo struct {
+	Name  string
+	Start uintptr
+	End   uintptr
+}
+
 // ModuleInfo: Stores information about loaded modules (DLLs)
 type ModuleInfo struct {
 	BaseAddress uintptr
 	Size        uint32
 	Name        string
-	Sections    map[uintptr]string // Maps address -> section name
+	Sections    []SectionInfo // List of sections with ranges
 }
 
 var loadedModules []ModuleInfo
@@ -197,9 +203,9 @@ func EnumerateModules() {
 	}
 }
 
-// parsePESections: Extract section names from PE headers
-func parsePESections(baseAddress uintptr) map[uintptr]string {
-	sections := make(map[uintptr]string)
+// parsePESections: Extract section names and ranges from PE headers
+func parsePESections(baseAddress uintptr) []SectionInfo {
+	var sections []SectionInfo
 
 	defer func() {
 		// Catch any access violations from reading invalid memory
@@ -212,31 +218,68 @@ func parsePESections(baseAddress uintptr) map[uintptr]string {
 		return sections
 	}
 
-	// Read NT headers
-	ntHeaders := (*IMAGE_NT_HEADERS64)(unsafe.Pointer(baseAddress + uintptr(dosHeader.E_lfanew)))
-	if ntHeaders.Signature != 0x00004550 { // "PE\0\0"
+	// Read NT headers (just signature and file header first)
+	peHeaderOffset := baseAddress + uintptr(dosHeader.E_lfanew)
+	signature := (*uint32)(unsafe.Pointer(peHeaderOffset))
+	if *signature != 0x00004550 { // "PE\0\0"
 		return sections
 	}
 
-	// Read section table (comes right after NT headers)
-	sectionTableOffset := baseAddress + uintptr(dosHeader.E_lfanew) +
-		unsafe.Sizeof(IMAGE_NT_HEADERS64{})
+	// Read file header (comes after 4-byte signature)
+	fileHeader := (*IMAGE_FILE_HEADER)(unsafe.Pointer(peHeaderOffset + 4))
 
-	numSections := int(ntHeaders.FileHeader.NumberOfSections)
+	// Section table comes after: Signature (4) + FileHeader (20) + OptionalHeader (variable)
+	// Use SizeOfOptionalHeader from FileHeader for correct offset
+	sectionTableOffset := peHeaderOffset + 4 +
+		unsafe.Sizeof(IMAGE_FILE_HEADER{}) +
+		uintptr(fileHeader.SizeOfOptionalHeader)
+
+	numSections := int(fileHeader.NumberOfSections)
 
 	for i := 0; i < numSections; i++ {
 		sectionPtr := (*IMAGE_SECTION_HEADER)(unsafe.Pointer(
 			sectionTableOffset + uintptr(i)*unsafe.Sizeof(IMAGE_SECTION_HEADER{}),
 		))
 
-		// Extract section name (null-terminated or 8 bytes)
-		name := strings.TrimRight(string(sectionPtr.Name[:]), "\x00")
-		sectionAddr := baseAddress + uintptr(sectionPtr.VirtualAddress)
+		// Extract and validate section name
+		name := cleanSectionName(sectionPtr.Name[:])
+		if name == "" {
+			continue // Skip invalid sections
+		}
 
-		sections[sectionAddr] = name
+		sectionStart := baseAddress + uintptr(sectionPtr.VirtualAddress)
+		sectionEnd := sectionStart + uintptr(sectionPtr.VirtualSize)
+
+		sections = append(sections, SectionInfo{
+			Name:  name,
+			Start: sectionStart,
+			End:   sectionEnd,
+		})
 	}
 
 	return sections
+}
+
+// cleanSectionName: Extract and validate section name from PE header
+func cleanSectionName(nameBytes []byte) string {
+	// Find null terminator or use all 8 bytes
+	length := 0
+	for length < len(nameBytes) && nameBytes[length] != 0 {
+		length++
+	}
+
+	if length == 0 {
+		return ""
+	}
+
+	// Validate all characters are printable ASCII
+	for i := 0; i < length; i++ {
+		if nameBytes[i] < 0x20 || nameBytes[i] > 0x7E {
+			return "" // Contains non-printable characters
+		}
+	}
+
+	return string(nameBytes[:length])
 }
 
 // identifyRegion: Determine what a memory region represents
@@ -255,13 +298,13 @@ func identifyRegion(mbi *MEMORY_BASIC_INFORMATION) string {
 	if mbi.Type == MEM_IMAGE {
 		for _, mod := range loadedModules {
 			if addr >= mod.BaseAddress && addr < mod.BaseAddress+uintptr(mod.Size) {
-				// Check if this address corresponds to a specific section
-				for sectionAddr, sectionName := range mod.Sections {
-					if addr == sectionAddr {
-						return fmt.Sprintf("%s (%s)", mod.Name, sectionName)
+				// Check if this address falls within any section
+				for _, section := range mod.Sections {
+					if addr >= section.Start && addr < section.End {
+						return fmt.Sprintf("%s (%s)", mod.Name, section.Name)
 					}
 				}
-				// If no specific section match, just return module name with offset
+				// If no section match, just return module name
 				return mod.Name
 			}
 		}
