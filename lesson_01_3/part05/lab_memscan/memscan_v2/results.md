@@ -1,7 +1,7 @@
 ```powershell
 PS C:\Users\tresa\OneDrive\Desktop> .\memscan_v2.exe
 ╔════════════════════════════════════════════════════════════╗
-║  ENHANCED MEMORY SCANNER v2.0 - With Module Enumeration   ║
+║  ENHANCED MEMORY SCANNER v2.0 - With Module Enumeration    ║
 ╚════════════════════════════════════════════════════════════╝
 
 [*] Step 1: Enumerating loaded modules...
