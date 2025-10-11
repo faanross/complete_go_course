@@ -1,0 +1,167 @@
+```powershell
+PS C:\Users\tresa\OneDrive\Desktop> .\memscan_v2.exe
+╔════════════════════════════════════════════════════════════╗
+║  ENHANCED MEMORY SCANNER v2.0 - With Module Enumeration   ║
+╚════════════════════════════════════════════════════════════╝
+
+[*] Step 1: Enumerating loaded modules...
+[✓] Found 11 loaded modules
+
+    [  1] memscan_v2.exe                  Base: 0x00007FF66FEA0000  Size: 0x00293000
+    [  2] ntdll.dll                       Base: 0x00007FFD611C0000  Size: 0x00269000
+    [  3] KERNEL32.DLL                    Base: 0x00007FFD60470000  Size: 0x000C9000
+    [  4] KERNELBASE.dll                  Base: 0x00007FFD5E840000  Size: 0x003F3000
+    [  5] apphelp.dll                     Base: 0x00007FFD5B4B0000  Size: 0x0009E000
+    [  6] bcryptprimitives.dll            Base: 0x00007FFD5E350000  Size: 0x00099000
+    [  7] powrprof.dll                    Base: 0x00007FFD5E1D0000  Size: 0x0005E000
+    [  8] ucrtbase.dll                    Base: 0x00007FFD5ECD0000  Size: 0x0014B000
+    [  9] RPCRT4.dll                      Base: 0x00007FFD5F7C0000  Size: 0x00118000
+    [ 10] UMPDC.dll                       Base: 0x00007FFD5E1B0000  Size: 0x00014000
+    [ 11] psapi.dll                       Base: 0x00007FFD606C0000  Size: 0x00008000
+
+═════════════════════════════════════════════════════════════════
+[*] Step 2: Scanning memory with module attribution...
+Start Address       - End Address         Prot  Type     Module
+────────────────────────────────────────────────────────────────────────────────
+0x0000000000010000 - 0x0000000000011000  RW-  Mapped   Memory-Mapped File
+0x0000000000020000 - 0x0000000000030000  RW-  Mapped   Memory-Mapped File
+0x0000000000030000 - 0x0000000000050000  R--  Mapped   Memory-Mapped File
+0x0000000000050000 - 0x0000000000054000  R--  Mapped   Memory-Mapped File
+0x0000000000060000 - 0x0000000000062000  RW-  Private  Heap/Stack/Private
+0x0000000000070000 - 0x0000000000081000  R--  Mapped   Memory-Mapped File
+0x0000000000090000 - 0x00000000000A1000  R--  Mapped   Memory-Mapped File
+0x00000000000B0000 - 0x00000000000B3000  R--  Mapped   Memory-Mapped File
+0x00000000000C0000 - 0x00000000000C7000  R--  Mapped   Memory-Mapped File
+0x00000000000D0000 - 0x00000000000EA000  RW-  Private  Heap/Stack/Private
+0x00000000001D0000 - 0x00000000001D7000  R--  Mapped   Memory-Mapped File
+0x00000000001E0000 - 0x00000000001E2000  R--  Mapped   Memory-Mapped File
+0x00000000001F0000 - 0x00000000001F2000  R--  Mapped   Memory-Mapped File
+0x000000000025B000 - 0x0000000000268000  RW-  Private  Heap/Stack/Private
+0x00000000005FA000 - 0x00000000005FD000  RW-  Private  Heap/Stack/Private
+0x00000000005FD000 - 0x0000000000600000  RW-  Private  Heap/Stack/Private
+0x0000000000600000 - 0x0000000000602000  RW-  Private  Heap/Stack/Private
+0x0000000000640000 - 0x0000000000643000  R--  Mapped   Memory-Mapped File
+0x0000000000650000 - 0x0000000000723000  R--  Mapped   Memory-Mapped File
+0x0000000000730000 - 0x0000000000741000  R--  Mapped   Memory-Mapped File
+0x0000000000750000 - 0x0000000000761000  R--  Mapped   Memory-Mapped File
+0x0000000000770000 - 0x0000000000771000  RW-  Private  Heap/Stack/Private
+0x0000000000780000 - 0x00000000007C0000  RW-  Private  Heap/Stack/Private
+0x00000000007C0000 - 0x00000000007E0000  RW-  Private  Heap/Stack/Private
+0x0000000000860000 - 0x0000000000861000  RW-  Private  Heap/Stack/Private
+0x0000000000CE6000 - 0x0000000000CE7000  RW-  Private  Heap/Stack/Private
+0x0000000003110000 - 0x0000000003111000  RW-  Private  Heap/Stack/Private
+0x0000000015260000 - 0x0000000015261000  RW-  Private  Heap/Stack/Private
+0x0000000035260000 - 0x0000000035261000  RW-  Private  Heap/Stack/Private
+0x00000000450E0000 - 0x00000000458E0000  RW-  Private  Heap/Stack/Private
+0x00000000458E0000 - 0x00000000459E0000  RW-  Private  Heap/Stack/Private
+0x00000000459E0000 - 0x00000000459F0000  RW-  Private  Heap/Stack/Private
+0x00000000459F0000 - 0x0000000045A00000  RW-  Private  Heap/Stack/Private
+0x0000000045BFB000 - 0x0000000045BFE000  RW-  Private  Heap/Stack/Private
+0x0000000045BFE000 - 0x0000000045C00000  RW-  Private  Heap/Stack/Private
+0x0000000045DFC000 - 0x0000000045DFF000  RW-  Private  Heap/Stack/Private
+0x0000000045DFF000 - 0x0000000045E00000  RW-  Private  Heap/Stack/Private
+0x0000000045E00000 - 0x0000000045E40000  RW-  Private  Heap/Stack/Private
+0x000000004603C000 - 0x000000004603F000  RW-  Private  Heap/Stack/Private
+0x000000004603F000 - 0x0000000046040000  RW-  Private  Heap/Stack/Private
+0x000000004623C000 - 0x000000004623F000  RW-  Private  Heap/Stack/Private
+0x000000004623F000 - 0x0000000046240000  RW-  Private  Heap/Stack/Private
+0x0000000046240000 - 0x0000000046280000  RW-  Private  Heap/Stack/Private
+0x000000004647C000 - 0x000000004647F000  RW-  Private  Heap/Stack/Private
+0x000000004647F000 - 0x0000000046480000  RW-  Private  Heap/Stack/Private
+0x000000007FFE0000 - 0x000000007FFE1000  R--  Private  Heap/Stack/Private
+0x000000007FFEE000 - 0x000000007FFEF000  R--  Private  Heap/Stack/Private
+0x000000C000000000 - 0x000000C000088000  RW-  Private  Heap/Stack/Private
+0x000000C000100000 - 0x000000C000104000  RW-  Private  Heap/Stack/Private
+0x00007FF4FDEC0000 - 0x00007FF4FDEC5000  R--  Mapped   Memory-Mapped File
+0x00007FF5FFFE0000 - 0x00007FF5FFFE1000  RW-  Private  Heap/Stack/Private
+0x00007FF5FFFF0000 - 0x00007FF5FFFF1000  R--  Mapped   Memory-Mapped File
+0x00007FF66FEA0000 - 0x00007FF66FEA1000  R--  Image    memscan_v2.exe
+0x00007FF66FEA1000 - 0x00007FF66FF42000  R-X  Image    memscan_v2.exe
+0x00007FF66FF42000 - 0x00007FF670014000  R--  Image    memscan_v2.exe
+0x00007FF670014000 - 0x00007FF670016000  RW-  Image    memscan_v2.exe
+0x00007FF670016000 - 0x00007FF670019000  ???  Image    memscan_v2.exe
+0x00007FF670019000 - 0x00007FF67001E000  RW-  Image    memscan_v2.exe
+0x00007FF67001E000 - 0x00007FF670020000  ???  Image    memscan_v2.exe
+0x00007FF670020000 - 0x00007FF670024000  RW-  Image    memscan_v2.exe
+0x00007FF670024000 - 0x00007FF670028000  ???  Image    memscan_v2.exe
+0x00007FF670028000 - 0x00007FF670029000  RW-  Image    memscan_v2.exe
+0x00007FF670029000 - 0x00007FF670031000  ???  Image    memscan_v2.exe
+0x00007FF670031000 - 0x00007FF670032000  RW-  Image    memscan_v2.exe
+0x00007FF670032000 - 0x00007FF670038000  ???  Image    memscan_v2.exe
+0x00007FF670038000 - 0x00007FF670040000  RW-  Image    memscan_v2.exe
+0x00007FF670040000 - 0x00007FF670066000  ???  Image    memscan_v2.exe
+0x00007FF670066000 - 0x00007FF67006B000  RW-  Image    memscan_v2.exe
+0x00007FF67006B000 - 0x00007FF670113000  R--  Image    memscan_v2.exe
+0x00007FF670113000 - 0x00007FF670114000  ???  Image    memscan_v2.exe
+0x00007FF670114000 - 0x00007FF670133000  R--  Image    memscan_v2.exe
+0x00007FFD5B4B0000 - 0x00007FFD5B4B1000  R--  Image    apphelp.dll
+0x00007FFD5B4B1000 - 0x00007FFD5B50A000  R-X  Image    apphelp.dll
+0x00007FFD5B50A000 - 0x00007FFD5B530000  R--  Image    apphelp.dll
+0x00007FFD5B530000 - 0x00007FFD5B532000  RW-  Image    apphelp.dll
+0x00007FFD5B532000 - 0x00007FFD5B54E000  R--  Image    apphelp.dll
+0x00007FFD5B54E000 - 0x00007FFD5B54F000  R-X  Image    Unknown Image
+0x00007FFD5E1B0000 - 0x00007FFD5E1B1000  R--  Image    UMPDC.dll
+0x00007FFD5E1B1000 - 0x00007FFD5E1BB000  R-X  Image    UMPDC.dll
+0x00007FFD5E1BB000 - 0x00007FFD5E1BF000  R--  Image    UMPDC.dll
+0x00007FFD5E1BF000 - 0x00007FFD5E1C0000  RW-  Image    UMPDC.dll
+0x00007FFD5E1C0000 - 0x00007FFD5E1C4000  R--  Image    UMPDC.dll
+0x00007FFD5E1C4000 - 0x00007FFD5E1C5000  R-X  Image    Unknown Image
+0x00007FFD5E1D0000 - 0x00007FFD5E1D1000  R--  Image    powrprof.dll
+0x00007FFD5E1D1000 - 0x00007FFD5E1E5000  R-X  Image    powrprof.dll
+0x00007FFD5E1E5000 - 0x00007FFD5E1F0000  R--  Image    powrprof.dll
+0x00007FFD5E1F0000 - 0x00007FFD5E1F1000  RW-  Image    powrprof.dll
+0x00007FFD5E1F1000 - 0x00007FFD5E22E000  R--  Image    powrprof.dll
+0x00007FFD5E22E000 - 0x00007FFD5E22F000  R-X  Image    Unknown Image
+0x00007FFD5E350000 - 0x00007FFD5E351000  R--  Image    bcryptprimitives.dll
+0x00007FFD5E351000 - 0x00007FFD5E3C7000  R-X  Image    bcryptprimitives.dll
+0x00007FFD5E3C7000 - 0x00007FFD5E3E1000  R--  Image    bcryptprimitives.dll
+0x00007FFD5E3E1000 - 0x00007FFD5E3E2000  RW-  Image    bcryptprimitives.dll
+0x00007FFD5E3E2000 - 0x00007FFD5E3E9000  R--  Image    bcryptprimitives.dll
+0x00007FFD5E3E9000 - 0x00007FFD5E3EA000  R-X  Image    Unknown Image
+0x00007FFD5E840000 - 0x00007FFD5E841000  R--  Image    KERNELBASE.dll
+0x00007FFD5E841000 - 0x00007FFD5E9ED000  R-X  Image    KERNELBASE.dll
+0x00007FFD5E9ED000 - 0x00007FFD5EBDC000  R--  Image    KERNELBASE.dll
+0x00007FFD5EBDC000 - 0x00007FFD5EBE4000  RW-  Image    KERNELBASE.dll
+0x00007FFD5EBE4000 - 0x00007FFD5EBE6000  ???  Image    KERNELBASE.dll
+0x00007FFD5EBE6000 - 0x00007FFD5EC33000  R--  Image    KERNELBASE.dll
+0x00007FFD5EC33000 - 0x00007FFD5EC34000  R-X  Image    Unknown Image
+0x00007FFD5ECD0000 - 0x00007FFD5ECD1000  R--  Image    ucrtbase.dll
+0x00007FFD5ECD1000 - 0x00007FFD5EDC8000  R-X  Image    ucrtbase.dll
+0x00007FFD5EDC8000 - 0x00007FFD5EE07000  R--  Image    ucrtbase.dll
+0x00007FFD5EE07000 - 0x00007FFD5EE0A000  RW-  Image    ucrtbase.dll
+0x00007FFD5EE0A000 - 0x00007FFD5EE1B000  R--  Image    ucrtbase.dll
+0x00007FFD5EE1B000 - 0x00007FFD5EE1C000  R-X  Image    Unknown Image
+0x00007FFD5F7C0000 - 0x00007FFD5F7C1000  R--  Image    RPCRT4.dll
+0x00007FFD5F7C1000 - 0x00007FFD5F89D000  R-X  Image    RPCRT4.dll
+0x00007FFD5F89D000 - 0x00007FFD5F8C3000  R--  Image    RPCRT4.dll
+0x00007FFD5F8C3000 - 0x00007FFD5F8C5000  RW-  Image    RPCRT4.dll
+0x00007FFD5F8C5000 - 0x00007FFD5F8D8000  R--  Image    RPCRT4.dll
+0x00007FFD5F8D8000 - 0x00007FFD5F8D9000  R-X  Image    Unknown Image
+0x00007FFD60470000 - 0x00007FFD60471000  R--  Image    KERNEL32.DLL
+0x00007FFD60471000 - 0x00007FFD604F7000  R-X  Image    KERNEL32.DLL
+0x00007FFD604F7000 - 0x00007FFD6052F000  R--  Image    KERNEL32.DLL
+0x00007FFD6052F000 - 0x00007FFD60531000  RW-  Image    KERNEL32.DLL
+0x00007FFD60531000 - 0x00007FFD60539000  R--  Image    KERNEL32.DLL
+0x00007FFD60539000 - 0x00007FFD6053A000  R-X  Image    Unknown Image
+0x00007FFD606C0000 - 0x00007FFD606C1000  R--  Image    psapi.dll
+0x00007FFD606C1000 - 0x00007FFD606C2000  R-X  Image    psapi.dll
+0x00007FFD606C2000 - 0x00007FFD606C4000  R--  Image    psapi.dll
+0x00007FFD606C4000 - 0x00007FFD606C5000  RW-  Image    psapi.dll
+0x00007FFD606C5000 - 0x00007FFD606C8000  R--  Image    psapi.dll
+0x00007FFD611C0000 - 0x00007FFD611C1000  R--  Image    ntdll.dll
+0x00007FFD611C1000 - 0x00007FFD61335000  R-X  Image    ntdll.dll
+0x00007FFD61335000 - 0x00007FFD6138E000  R--  Image    ntdll.dll
+0x00007FFD6138E000 - 0x00007FFD61398000  RW-  Image    ntdll.dll
+0x00007FFD61398000 - 0x00007FFD61429000  R--  Image    ntdll.dll
+0x00007FFD61429000 - 0x00007FFD6142A000  R-X  Image    Unknown Image
+
+[✓] Scan complete with module attribution
+
+[⚠️] PARTIAL SUCCESS: We know which DLL, but not which section!
+    - Can identify: memory belongs to 'kernel32.dll'
+    - Cannot identify: whether it's .text, .data, or .rdata
+    - Next step: Parse PE sections for complete forensics
+    
+   
+    
+```
