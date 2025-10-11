@@ -1,3 +1,4 @@
+```powershell
 PS C:\Users\tresa\OneDrive\Desktop> .\memscan_v3.exe
 ╔═══════════════════════════════════════════════════════════════════════════╗
 ║       COMPLETE MEMORY FORENSICS TOOL v3.0 - Full PE Section Parser        ║
@@ -278,3 +279,5 @@ Statistics:
 ✓ Memory type classification (Image/Private/Mapped)
 ✓ Protection analysis (R-X, RW-, etc.)
 ✓ Complete address space mapping
+
+```
