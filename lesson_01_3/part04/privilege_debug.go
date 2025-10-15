@@ -4,8 +4,8 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"os"
 	"syscall"
 	"unsafe"
 )
@@ -71,69 +71,58 @@ var (
 )
 
 func main() {
+	pid := flag.Int("pid", 0, "Target process ID")
+	sedebug := flag.Bool("sedebug", false, "Enable SeDebugPrivilege (true/false)")
+	flag.Parse()
+
+	if *pid == 0 {
+		fmt.Println("Usage: sedebug.exe -pid <PID> -sedebug=<true|false>")
+		fmt.Println("\nExamples:")
+		fmt.Println("  sedebug.exe -pid 1234 -sedebug=false")
+		fmt.Println("  sedebug.exe -pid 2460 -sedebug=true")
+		return
+	}
+
 	fmt.Println("═══════════════════════════════════════════════════")
 	fmt.Println("    SeDebugPrivilege Lab: What Can It Do?")
 	fmt.Println("═══════════════════════════════════════════════════\n")
 
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: sedebug.exe <PID>\n")
-		fmt.Println("Test with:")
-		fmt.Println("  Your calc:       sedebug.exe <calc_pid>")
-		fmt.Println("  System process:  sedebug.exe <spoolsv_pid>")
-		fmt.Println("  Special process: sedebug.exe <smss_pid>")
-		return
-	}
-
-	var targetPID uint32
-	fmt.Sscanf(os.Args[1], "%d", &targetPID)
-
-	// Check if we're admin
 	isAdmin := IsAdmin()
 	fmt.Printf("[*] Running as Administrator: %v\n", isAdmin)
 
-	// Check if SeDebugPrivilege is enabled
+	if *sedebug {
+		fmt.Println("[*] Enabling SeDebugPrivilege...")
+		if err := EnableSeDebugPrivilege(); err != nil {
+			fmt.Printf("❌ Failed to enable: %v\n", err)
+			return
+		}
+		fmt.Println("✅ SeDebugPrivilege enabled!")
+	} else {
+		fmt.Println("[*] Disabling SeDebugPrivilege...")
+		if err := DisableSeDebugPrivilege(); err != nil {
+			fmt.Printf("❌ Failed to disable: %v\n", err)
+			return
+		}
+		fmt.Println("✅ SeDebugPrivilege disabled!")
+	}
+
 	hasDebug := HasSeDebugPrivilege()
 	fmt.Printf("[*] SeDebugPrivilege enabled: %v\n\n", hasDebug)
 
-	// Try to open the process
-	fmt.Printf("[*] Opening process %d...\n", targetPID)
-	handle, err := OpenProcess(targetPID)
+	fmt.Printf("[*] Opening process %d...\n", *pid)
+	handle, err := OpenProcess(uint32(*pid))
 
 	if err != nil {
 		fmt.Printf("❌ FAILED: %v\n\n", err)
-
-		if !isAdmin {
-			fmt.Println("→ You need Administrator privileges")
-			fmt.Println("  Run this program as Administrator\n")
-			return
-		}
-
-		if !hasDebug {
-			fmt.Println("→ Enabling SeDebugPrivilege...\n")
-			if err := EnableSeDebugPrivilege(); err != nil {
-				fmt.Printf("❌ Failed to enable: %v\n", err)
-				return
-			}
-			fmt.Println("✅ SeDebugPrivilege enabled!\n")
-			fmt.Printf("[*] Retrying process %d...\n", targetPID)
-			handle, err = OpenProcess(targetPID)
-			if err != nil {
-				fmt.Printf("❌ STILL FAILED: %v\n\n", err)
-				fmt.Println("→ This process is protected by the kernel")
-				fmt.Println("  SeDebugPrivilege is not enough\n")
-				return
-			}
-		} else {
-			fmt.Println("→ This process is protected by the kernel")
-			fmt.Println("  SeDebugPrivilege is not enough\n")
-			return
-		}
+		fmt.Println("═══════════════════════════════════════════════════")
+		fmt.Println("RESULT: Access denied")
+		fmt.Println("═══════════════════════════════════════════════════")
+		return
 	}
 
 	defer syscall.CloseHandle(handle)
 	fmt.Printf("✅ Handle obtained: 0x%X\n\n", handle)
 
-	// Test if we can actually use it
 	fmt.Println("[*] Testing memory access...")
 	if CanReadMemory(handle) {
 		fmt.Println("✅ SUCCESS: Can read process memory\n")
@@ -145,12 +134,6 @@ func main() {
 		fmt.Println("  • Write memory")
 		fmt.Println("  • Inject code")
 		fmt.Println("  • Terminate process")
-
-		if !isAdmin {
-			fmt.Println("\nThis is YOUR process - no special privileges needed")
-		} else if hasDebug {
-			fmt.Println("\nSeDebugPrivilege gave you this access")
-		}
 	} else {
 		fmt.Println("❌ FAILED: Cannot read memory\n")
 		fmt.Println("═══════════════════════════════════════════════════")
@@ -176,7 +159,6 @@ func OpenProcess(pid uint32) (syscall.Handle, error) {
 }
 
 func CanReadMemory(handle syscall.Handle) bool {
-	// Find valid memory
 	addr := FindValidMemory(handle)
 	if addr == 0 {
 		return false
@@ -328,6 +310,46 @@ func EnableSeDebugPrivilege() error {
 		PrivilegeCount: 1,
 		Privileges: [1]LUID_AND_ATTRIBUTES{
 			{Luid: luid, Attributes: SE_PRIVILEGE_ENABLED},
+		},
+	}
+
+	ret, _, _ = procAdjustTokenPrivileges.Call(
+		uintptr(token),
+		0,
+		uintptr(unsafe.Pointer(&tp)),
+		0, 0, 0,
+	)
+	if ret == 0 {
+		return fmt.Errorf("failed to adjust privileges")
+	}
+
+	return nil
+}
+
+func DisableSeDebugPrivilege() error {
+	var token syscall.Handle
+	proc, _ := syscall.GetCurrentProcess()
+	ret, _, _ := procOpenProcessToken.Call(
+		uintptr(proc),
+		TOKEN_ADJUST_PRIVILEGES|TOKEN_QUERY,
+		uintptr(unsafe.Pointer(&token)),
+	)
+	if ret == 0 {
+		return fmt.Errorf("failed to open token")
+	}
+	defer syscall.CloseHandle(token)
+
+	var luid LUID
+	privName, _ := syscall.UTF16PtrFromString("SeDebugPrivilege")
+	ret, _, _ = procLookupPrivilegeValue.Call(0, uintptr(unsafe.Pointer(privName)), uintptr(unsafe.Pointer(&luid)))
+	if ret == 0 {
+		return fmt.Errorf("privilege not available")
+	}
+
+	tp := TOKEN_PRIVILEGES{
+		PrivilegeCount: 1,
+		Privileges: [1]LUID_AND_ATTRIBUTES{
+			{Luid: luid, Attributes: 0},
 		},
 	}
 
