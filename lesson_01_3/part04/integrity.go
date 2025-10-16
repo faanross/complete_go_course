@@ -14,7 +14,7 @@ import (
 // Token and process access rights
 const (
 	TOKEN_QUERY               = 0x0008
-	PROCESS_QUERY_INFORMATION = 0x0400
+	PROCESS_QUERY_INFORMATION = 0x0400 | 0x0010
 )
 
 // Structure definitions for token information

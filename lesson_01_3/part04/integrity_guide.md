@@ -1,5 +1,14 @@
 # Process Integrity Level Code Explanation
 
+## Understanding the Code
+
+**The two-call pattern:** Windows APIs that return variable-sized data use a common pattern: call once with a NULL buffer to get the size, allocate that size, then call again to get the data. This code follows that pattern with `GetTokenInformation`.
+
+**SID structure parsing:** Integrity levels are stored as SIDs (Security Identifiers) with a special format. The actual integrity level value is the last **sub-authority** in the SID. The code calculates the offset to this value based on the SID structure layout.
+
+**Integrity level ranges:** The code uses range checks rather than exact values because integrity levels form a continuum. Anything from 0x2000 to 0x2FFF is considered "Medium," 0x3000 to 0x3FFF is "High," etc.
+
+
 ## Package and Imports
 
 ```go
